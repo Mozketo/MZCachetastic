@@ -8,6 +8,14 @@ A NuGet package is TBA.
 
 ## IMPLEMENTATION:
 
+    // Make sure you scope Cachetastic as you see fit.
+    protected static Cachetastic Cachetastic;
+    ...
+    static Constructor 
+    {
+        Cachetastic = new Cachetastic();
+    }
+    ...
     var result = Cachetastic.Fetch(key, () -> DoSomething());
     
 ## IS IT WORKING:
