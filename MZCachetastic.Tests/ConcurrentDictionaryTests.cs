@@ -75,6 +75,25 @@ namespace MZCachetastic.Tests
 			Assert.AreEqual(expected, actual);
 		}
 
+        [TestMethod]
+        public void CacheShouldBeEmpty_After_LifetimeExpires()
+        {
+            var cachetastic = new Cachetastic();
+            cachetastic.LifetimeInMilliseconds = 500;
+            for (int i = 0; i < 10000; i++)
+            {
+                int iTemp = i;
+                cachetastic.Fetch(i.ToString(), () => iTemp);
+            }
+
+            System.Threading.Thread.Sleep(1000);
+
+            cachetastic.Fetch("1", () => 1);
+
+            // We actually expect a result of 1 here, as we need to add an item after the Lifetime for the Pruning to take place.
+            Assert.AreEqual(1, cachetastic.Count);
+        }
+
         protected string InvokeCacheHit(string expected) 
         {
             return expected;

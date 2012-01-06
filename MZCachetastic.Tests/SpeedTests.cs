@@ -75,5 +75,28 @@ namespace MZCachetastic.Tests
 
 			Debug.WriteLine(String.Format("Time to Load (ms): {0}", stopwatch.ElapsedMilliseconds));
 		}
+
+        [TestMethod]
+        public void TestMethod4()
+        {
+            var cachetastic = new Cachetastic();
+            var stopwatch = Stopwatch.StartNew();
+
+            // Load the Cache with Garbage
+            for (int i = 0; i < 1000000; i++)
+            {
+                int iTemp = i;
+                cachetastic.Fetch(i.ToString(), () => iTemp);
+            }
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                int iTemp = i;
+                cachetastic.Fetch(i.ToString(), "x", () => iTemp);
+            }
+
+            var elapsed = stopwatch.ElapsedMilliseconds;
+            Trace.WriteLine(String.Format("Time to Load (ms): {0}", elapsed));
+        }
 	}
 }
