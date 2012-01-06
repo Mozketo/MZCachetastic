@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("MZCachetastic")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A simple mechanism for Caching into a Concurrent Dictionary.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("Ben Clark-Robinson")]
 [assembly: AssemblyProduct("MZCachetastic")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2012")]
+[assembly: AssemblyCopyright("Copyright © Ben Clark-Robinson 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

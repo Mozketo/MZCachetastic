@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/Mozketo/MZCachetastic</licenseUrl>
+    <projectUrl>https://github.com/Mozketo/MZCachetastic</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <copyright>Copyright 2012 Ben Clark-Robinson</copyright>
+    <tags>.net cache caching</tags>
+  </metadata>
+</package>
