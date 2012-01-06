@@ -1,4 +1,4 @@
-# Cachetastic (for .net)
+# MZCachetastic (for .net)
 
 A very simple to implement caching mechanism for .net.
 
@@ -8,8 +8,7 @@ A NuGet package is TBA.
 
 ## IMPLEMENTATION:
 
-    var result = Cachetastic.Fetch(key, hashcode, () ->
-        DoSomething());
+    var result = Cachetastic.Fetch(key, () -> DoSomething());
     
 ## IS IT WORKING:
 
