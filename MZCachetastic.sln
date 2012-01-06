@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZCachetastic", "MZCachetastic\MZCachetastic.csproj", "{CAD51F51-BA61-4F35-882D-93616A11BE8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZCachetastic.Tests", "MZCachetastic.Tests\MZCachetastic.Tests.csproj", "{24D39F03-32AD-4FD9-BACC-6D8FF71A7D07}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{50AA86E5-BFDA-4116-9F38-DDA2D5F227D3}"
+	ProjectSection(SolutionItems) = preProject
+		Cachetastic.vsmdi = Cachetastic.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Cachetastic.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CAD51F51-BA61-4F35-882D-93616A11BE8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAD51F51-BA61-4F35-882D-93616A11BE8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAD51F51-BA61-4F35-882D-93616A11BE8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAD51F51-BA61-4F35-882D-93616A11BE8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24D39F03-32AD-4FD9-BACC-6D8FF71A7D07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24D39F03-32AD-4FD9-BACC-6D8FF71A7D07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24D39F03-32AD-4FD9-BACC-6D8FF71A7D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24D39F03-32AD-4FD9-BACC-6D8FF71A7D07}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
