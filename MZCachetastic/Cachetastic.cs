@@ -21,6 +21,14 @@ namespace MZCachetastic
 			LifetimeInMilliseconds = TimeSpan.FromMinutes(5).TotalMilliseconds;
 		}
 
+        public int Count
+        {
+            get
+            {
+                return Cache.Count;
+            }
+        }
+
         public T Fetch<T>(string key, Func<T> fetchFunc)
         {
             return Fetch(key, String.Empty, fetchFunc);
@@ -42,10 +50,10 @@ namespace MZCachetastic
 
             if (!cacheHit || forceCacheUpdate)
             {
-				if (cacheHit)
-				{
-				    Cache.TryRemove(key, out cachePayload);
-				}
+                if (cacheHit)
+                {
+                    Cache.TryRemove(key, out cachePayload);
+                }
             	cachePayload = new CachePayload { Key = key, Hashcode = hashcode, Value = fetchFunc() };
 				//Cache.AddOrUpdate(key, cachePayload, (oldKey, oldValue) => cachePayload);
             	bool didAdd = Cache.TryAdd(key, cachePayload);
@@ -60,12 +68,28 @@ namespace MZCachetastic
 
         public void PruneCache()
         {
+            
+
         	CachePayload cachePayload;
-			for (Bruce.TryPeek(out cachePayload); cachePayload != null && cachePayload.DateAdded.Subtract(DateTime.UtcNow).TotalMilliseconds > LifetimeInMilliseconds; Bruce.TryPeek(out cachePayload)) 
-			{
-				Bruce.TryDequeue(out cachePayload);
-				Cache.TryRemove(cachePayload.Key, out cachePayload);
-			}
+
+            //while (Bruce.TryPeek(out cachePayload))
+            //{
+            //    if (cachePayload.DateAdded.Subtract(DateTime.UtcNow).TotalMilliseconds > LifetimeInMilliseconds)
+            //    {
+            //        Bruce.TryDequeue(out cachePayload);
+            //        Cache.TryRemove(cachePayload.Key, out cachePayload);
+            //    }
+            //    else
+            //    {
+            //        break;
+            //    }
+            //}
+
+            for (Bruce.TryPeek(out cachePayload); cachePayload != null && DateTime.UtcNow.Subtract(cachePayload.DateAdded).TotalMilliseconds > LifetimeInMilliseconds; Bruce.TryPeek(out cachePayload))
+            {
+                Bruce.TryDequeue(out cachePayload);
+                Cache.TryRemove(cachePayload.Key, out cachePayload);
+            }
         }
     }
 }
