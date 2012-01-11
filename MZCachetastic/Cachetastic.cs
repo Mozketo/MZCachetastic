@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace MZCachetastic
 {
-	public class Cachetastic
+	public class Cachetastic : ICachetastic
 	{
 		private double _lifetimeInMilliseconds;
 
@@ -33,11 +33,21 @@ namespace MZCachetastic
 			get { return Cache.Count; }
 		}
 
+        /// <summary>
+        /// Attempt to get the cached item based on a key. If the key is not found in the cache then the
+        /// fetchCallback Func will be executed.
+        /// </summary>
+        /// <returns>The result of the cache lookup or failing that the fetchCallback.</returns>
         public T Get<T>(string key, Func<T> fetchCallback)
 		{
             return Get(key, String.Empty, fetchCallback);
 		}
 
+        /// <summary>
+        /// Attempt to get the cached item based on a key. If the key is not found in the cache then the
+        /// fetchCallback Func will be executed. If the hashcode differs between the 
+        /// </summary>
+        /// <returns>The result of the cache lookup or failing that the fetchCallback.</returns>
         public T Get<T>(string key, string hashcode, Func<T> fetchCallback)
 		{
 			PruneAgedItemsFromCache();

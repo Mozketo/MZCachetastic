@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="CachePayload.cs" />
     <Compile Include="Cachetastic.cs" />
+    <Compile Include="ICachetastic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
