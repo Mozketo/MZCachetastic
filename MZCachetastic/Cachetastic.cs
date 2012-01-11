@@ -33,12 +33,12 @@ namespace MZCachetastic
 			get { return Cache.Count; }
 		}
 
-		public T Fetch<T>(string key, Func<T> fetchFunc)
+        public T Get<T>(string key, Func<T> fetchCallback)
 		{
-			return Fetch(key, String.Empty, fetchFunc);
+            return Get(key, String.Empty, fetchCallback);
 		}
 
-		public T Fetch<T>(string key, string hashcode, Func<T> fetchFunc)
+        public T Get<T>(string key, string hashcode, Func<T> fetchCallback)
 		{
 			PruneAgedItemsFromCache();
 
@@ -58,7 +58,7 @@ namespace MZCachetastic
 				{
 					Cache.TryRemove(key, out cachePayload);
 				}
-				cachePayload = new CachePayload { Key = key, Hashcode = hashcode, Value = fetchFunc() };
+				cachePayload = new CachePayload { Key = key, Hashcode = hashcode, Value = fetchCallback() };
 				bool didAdd = Cache.TryAdd(key, cachePayload);
 				if (didAdd)
 				{
@@ -74,7 +74,7 @@ namespace MZCachetastic
 		/// </summary>
 		/// <param name="key">The key of the cached item to invalidate.</param>
 		/// <returns>Returns true if the cached item has been removed from the cache. False if the item for the key was not removed (Note: False may mean the item wasn't cached).</returns>
-		public bool Invalidate(string key)
+		public bool Remove(string key)
 		{
 			CachePayload cachePayload;
 			return Cache.TryRemove(key, out cachePayload);
