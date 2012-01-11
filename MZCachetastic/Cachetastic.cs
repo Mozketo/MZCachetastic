@@ -4,92 +4,93 @@ using System.Threading;
 
 namespace MZCachetastic
 {
-    public class Cachetastic
-    {
-        protected ConcurrentDictionary<string, CachePayload> Cache = new ConcurrentDictionary<string, CachePayload>();
-		protected ConcurrentQueue<CachePayload> Bruce = new ConcurrentQueue<CachePayload>();
+	public class Cachetastic
+	{
+		private double _lifetimeInMilliseconds;
 
-		protected double _lifetimeInMilliseconds;
-		public double LifetimeInMilliseconds
-		{
-			get { return _lifetimeInMilliseconds; }
-			set { Interlocked.Exchange(ref _lifetimeInMilliseconds, Math.Abs(value)); } 
-		}
+		protected ConcurrentDictionary<string, CachePayload> Cache = new ConcurrentDictionary<string, CachePayload>();
+		protected ConcurrentQueue<CachePayload> CacheLifetime = new ConcurrentQueue<CachePayload>();
 
 		public Cachetastic()
 		{
-			LifetimeInMilliseconds = TimeSpan.FromMinutes(5).TotalMilliseconds;
+			Lifetime = TimeSpan.FromMinutes(5);
 		}
 
-        public int Count
-        {
-            get
-            {
-                return Cache.Count;
-            }
-        }
+		/// <summary>
+		/// Define how long an item should be held in the cache.
+		/// </summary>
+		public TimeSpan Lifetime
+		{
+			get { return TimeSpan.FromMilliseconds(_lifetimeInMilliseconds); }
+			set { Interlocked.Exchange(ref _lifetimeInMilliseconds, Math.Abs(value.TotalMilliseconds)); }
+		}
 
-        public T Fetch<T>(string key, Func<T> fetchFunc)
-        {
-            return Fetch(key, String.Empty, fetchFunc);
-        }
+		/// <summary>
+		/// Gets the count of the number of items currently being cached.
+		/// </summary>
+		public int Count
+		{
+			get { return Cache.Count; }
+		}
 
-        public T Fetch<T>(string key, string hashcode, Func<T> fetchFunc)
-        {
-			// (Check every x seconds || size > y) && !Running
-			PruneCache();
+		public T Fetch<T>(string key, Func<T> fetchFunc)
+		{
+			return Fetch(key, String.Empty, fetchFunc);
+		}
 
-        	bool forceCacheUpdate = false;
+		public T Fetch<T>(string key, string hashcode, Func<T> fetchFunc)
+		{
+			PruneAgedItemsFromCache();
+
+			bool forceCacheUpdate = false;
 			CachePayload cachePayload;
-            bool cacheHit = Cache.TryGetValue(key, out cachePayload);
-            if (cacheHit)
-            {
-                if (!hashcode.Equals(cachePayload.Hashcode))
-                    forceCacheUpdate = true;
-            }
+			bool cacheHit = Cache.TryGetValue(key, out cachePayload);
+			if (cacheHit)
+			{
+				if (!hashcode.Equals(cachePayload.Hashcode))
+					forceCacheUpdate = true;
+			}
 
-            if (!cacheHit || forceCacheUpdate)
-            {
-                if (cacheHit)
-                {
-                    Cache.TryRemove(key, out cachePayload);
-                }
-            	cachePayload = new CachePayload { Key = key, Hashcode = hashcode, Value = fetchFunc() };
-				//Cache.AddOrUpdate(key, cachePayload, (oldKey, oldValue) => cachePayload);
-            	bool didAdd = Cache.TryAdd(key, cachePayload);
+			if (!cacheHit || forceCacheUpdate)
+			{
+				// Testing over 10,000,000 cached items a Cache.TryRemove()/TryAdd() was more efficient by 1s (on an i7 2.8GHz) than using AddOrUpdate().
+				if (cacheHit)
+				{
+					Cache.TryRemove(key, out cachePayload);
+				}
+				cachePayload = new CachePayload { Key = key, Hashcode = hashcode, Value = fetchFunc() };
+				bool didAdd = Cache.TryAdd(key, cachePayload);
 				if (didAdd)
 				{
-					Bruce.Enqueue(cachePayload);
+					CacheLifetime.Enqueue(cachePayload);
 				}
-            }
+			}
 
-            return (T)cachePayload.Value;
-        }
+			return (T) cachePayload.Value;
+		}
 
-        public void PruneCache()
-        {
-            
+		/// <summary>
+		/// Invalidates the cached item based on the key. This will remove the item from the cache.
+		/// </summary>
+		/// <param name="key">The key of the cached item to invalidate.</param>
+		/// <returns>Returns true if the cached item has been removed from the cache. False if the item for the key was not removed (Note: False may mean the item wasn't cached).</returns>
+		public bool Invalidate(string key)
+		{
+			CachePayload cachePayload;
+			return Cache.TryRemove(key, out cachePayload);
+		}
 
-        	CachePayload cachePayload;
-
-            //while (Bruce.TryPeek(out cachePayload))
-            //{
-            //    if (cachePayload.DateAdded.Subtract(DateTime.UtcNow).TotalMilliseconds > LifetimeInMilliseconds)
-            //    {
-            //        Bruce.TryDequeue(out cachePayload);
-            //        Cache.TryRemove(cachePayload.Key, out cachePayload);
-            //    }
-            //    else
-            //    {
-            //        break;
-            //    }
-            //}
-
-            for (Bruce.TryPeek(out cachePayload); cachePayload != null && DateTime.UtcNow.Subtract(cachePayload.DateAdded).TotalMilliseconds > LifetimeInMilliseconds; Bruce.TryPeek(out cachePayload))
-            {
-                Bruce.TryDequeue(out cachePayload);
-                Cache.TryRemove(cachePayload.Key, out cachePayload);
-            }
-        }
-    }
+		/// <summary>
+		/// Check to see the items in the Cache that are older than the Lifetime. Cached items older than the Lifetime will be removed from the cache.
+		/// </summary>
+		protected void PruneAgedItemsFromCache()
+		{
+			CachePayload cachePayload;
+			for (CacheLifetime.TryPeek(out cachePayload); cachePayload != null && DateTime.UtcNow.Subtract(cachePayload.DateAdded) > Lifetime; CacheLifetime.TryPeek(out cachePayload))
+			{
+				CacheLifetime.TryDequeue(out cachePayload);
+				Cache.TryRemove(cachePayload.Key, out cachePayload);
+			}
+		}
+	}
 }
