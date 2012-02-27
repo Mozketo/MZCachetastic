@@ -13,7 +13,7 @@ namespace MZCachetastic.Tests
 		{
 			var cachetastic = new Cachetastic
 			                  	{
-			                  		LifetimeInMilliseconds = TimeSpan.FromSeconds(1).TotalMilliseconds
+			                  		Lifetime = TimeSpan.FromSeconds(1)
 			                  	};
 			var stopwatch = Stopwatch.StartNew();
 
@@ -21,7 +21,7 @@ namespace MZCachetastic.Tests
 			for (int i = 0; i < 1000000; i++)
 			{
 				int iTemp = i;
-				cachetastic.Fetch(i.ToString(), () => iTemp);
+				cachetastic.Get(i.ToString(), () => iTemp);
 			}
 
 			Debug.WriteLine(String.Format("Time to Load (ms): {0}", stopwatch.ElapsedMilliseconds));
@@ -37,13 +37,13 @@ namespace MZCachetastic.Tests
 			for (int i = 0; i < 1000000; i++)
 			{
 				int iTemp = i;
-				cachetastic.Fetch(i.ToString(), () => iTemp);
+				cachetastic.Get(i.ToString(), () => iTemp);
 			}
 
 			for (int i = 0; i < 1000000; i++)
 			{
 				int iTemp = i;
-				cachetastic.Fetch(i.ToString(), () => iTemp);
+				cachetastic.Get(i.ToString(), () => iTemp);
 			}
 
 			Debug.WriteLine(String.Format("Time to Load (ms): {0}", stopwatch.ElapsedMilliseconds));
@@ -54,7 +54,7 @@ namespace MZCachetastic.Tests
 		{
 			var cachetastic = new Cachetastic
 			{
-				LifetimeInMilliseconds = TimeSpan.FromSeconds(1).TotalMilliseconds
+				Lifetime = TimeSpan.FromSeconds(1)
 			};
 			var stopwatch = Stopwatch.StartNew();
 
@@ -62,7 +62,7 @@ namespace MZCachetastic.Tests
 			for (int i = 0; i < 1000000; i++)
 			{
 				int iTemp = i;
-				cachetastic.Fetch(i.ToString(), () => iTemp);
+				cachetastic.Get(i.ToString(), () => iTemp);
 			}
 
 			Thread.Sleep(1000);
@@ -70,7 +70,7 @@ namespace MZCachetastic.Tests
 			for (int i = 0; i < 1000000; i++)
 			{
 				int iTemp = i;
-				cachetastic.Fetch(i.ToString(), () => iTemp);
+				cachetastic.Get(i.ToString(), () => iTemp);
 			}
 
 			Debug.WriteLine(String.Format("Time to Load (ms): {0}", stopwatch.ElapsedMilliseconds));
@@ -86,13 +86,13 @@ namespace MZCachetastic.Tests
             for (int i = 0; i < 1000000; i++)
             {
                 int iTemp = i;
-                cachetastic.Fetch(i.ToString(), () => iTemp);
+				cachetastic.Get(i.ToString(), () => iTemp);
             }
 
             for (int i = 0; i < 1000000; i++)
             {
                 int iTemp = i;
-                cachetastic.Fetch(i.ToString(), "x", () => iTemp);
+				cachetastic.Get(i.ToString(), "x", () => iTemp);
             }
 
             var elapsed = stopwatch.ElapsedMilliseconds;

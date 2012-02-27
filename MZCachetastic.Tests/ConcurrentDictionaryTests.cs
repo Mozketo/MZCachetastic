@@ -16,7 +16,7 @@ namespace MZCachetastic.Tests
             const string hashcode = "Honey";
             const string expected = "Sweet";
 
-            string actual = new Cachetastic().Fetch(key, hashcode, () => InvokeCacheHit(expected) );
+			string actual = new Cachetastic().Get(key, hashcode, () => InvokeCacheHit(expected));
 
             Assert.AreEqual(expected, actual);
         }
@@ -29,8 +29,8 @@ namespace MZCachetastic.Tests
 			const string expected = "Sweet";
 
 			var cachetastic = new Cachetastic();
-			cachetastic.Fetch(key, hashcode, () => InvokeCacheHit(expected));
-			string actual = cachetastic.Fetch(key, hashcode, () => InvokeCacheMiss(expected));
+			cachetastic.Get(key, hashcode, () => InvokeCacheHit(expected));
+			string actual = cachetastic.Get(key, hashcode, () => InvokeCacheMiss(expected));
 
 			Assert.AreEqual(expected, actual);
 		}
@@ -43,8 +43,8 @@ namespace MZCachetastic.Tests
 			const string expected = "Sweet";
 
 			var cachetastic = new Cachetastic();
-			cachetastic.Fetch(key, hashcode, () => InvokeCacheHit(expected));
-			string actual = cachetastic.Fetch(key, hashcode + "x", () => InvokeCacheMiss(expected));
+			cachetastic.Get(key, hashcode, () => InvokeCacheHit(expected));
+			string actual = cachetastic.Get(key, hashcode + "x", () => InvokeCacheMiss(expected));
 
 			Assert.AreNotEqual(expected, actual);
 		}
@@ -56,7 +56,7 @@ namespace MZCachetastic.Tests
 			const string hashcode = "Honey";
 			const string expected = "Sweet";
 
-			string actual = new Cachetastic().Fetch(key, hashcode, () => InvokeCacheHit(expected));
+			string actual = new Cachetastic().Get(key, hashcode, () => InvokeCacheHit(expected));
 
 			Assert.AreEqual(expected, actual);
 		}
@@ -69,8 +69,8 @@ namespace MZCachetastic.Tests
 			const string expected = "Sweet";
 
 			var cachetastic = new Cachetastic();
-			cachetastic.Fetch(key, hashcode, () => InvokeCacheHit(expected));
-			string actual = cachetastic.Fetch(key, hashcode, () => InvokeCacheMiss(expected));
+			cachetastic.Get(key, hashcode, () => InvokeCacheHit(expected));
+			string actual = cachetastic.Get(key, hashcode, () => InvokeCacheMiss(expected));
 
 			Assert.AreEqual(expected, actual);
 		}
@@ -79,20 +79,31 @@ namespace MZCachetastic.Tests
         public void CacheShouldBeEmpty_After_LifetimeExpires()
         {
             var cachetastic = new Cachetastic();
-            cachetastic.LifetimeInMilliseconds = 500;
+            cachetastic.Lifetime = TimeSpan.FromMilliseconds(500);
             for (int i = 0; i < 10000; i++)
             {
                 int iTemp = i;
-                cachetastic.Fetch(i.ToString(), () => iTemp);
+				cachetastic.Get(i.ToString(), () => iTemp);
             }
 
             System.Threading.Thread.Sleep(1000);
 
-            cachetastic.Fetch("1", () => 1);
+			cachetastic.Get("1", () => 1);
 
             // We actually expect a result of 1 here, as we need to add an item after the Lifetime for the Pruning to take place.
             Assert.AreEqual(1, cachetastic.Count);
         }
+
+		[TestMethod]
+		public void CacheShouldInvalidateAndUpdateAfterLifeTimeExpires()
+		{
+			var cachetastic = new Cachetastic { Lifetime = TimeSpan.FromMilliseconds(500) };
+			DateTime originalDateTime = cachetastic.Get("id", () => DateTime.UtcNow);
+			System.Threading.Thread.Sleep(1000);
+			DateTime newDateTime = cachetastic.Get("id", () => DateTime.UtcNow);
+
+			Assert.AreNotEqual(originalDateTime, newDateTime);
+		}
 
         protected string InvokeCacheHit(string expected) 
         {
