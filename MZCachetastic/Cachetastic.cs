@@ -16,6 +16,11 @@ namespace MZCachetastic
 			Lifetime = TimeSpan.FromMinutes(5);
 		}
 
+		public Cachetastic(TimeSpan lifetime)
+		{
+			Lifetime = lifetime;
+		}
+
 		/// <summary>
 		/// Define how long an item should be held in the cache.
 		/// </summary>
@@ -96,11 +101,12 @@ namespace MZCachetastic
 		protected void PruneAgedItemsFromCache()
 		{
 			CachePayload cachePayload;
-			for (CacheLifetime.TryPeek(out cachePayload); cachePayload != null && DateTime.UtcNow.Subtract(cachePayload.DateAdded) > Lifetime; CacheLifetime.TryPeek(out cachePayload))
-			{
-				CacheLifetime.TryDequeue(out cachePayload);
-				Cache.TryRemove(cachePayload.Key, out cachePayload);
-			}
+            for (CacheLifetime.TryPeek(out cachePayload); cachePayload != null && DateTime.UtcNow.Subtract(cachePayload.DateAdded) > Lifetime; CacheLifetime.TryPeek(out cachePayload))
+            {
+                CachePayload dequeueCachePayload;
+                CacheLifetime.TryDequeue(out dequeueCachePayload);
+                Cache.TryRemove(cachePayload.Key, out cachePayload);
+            }
 		}
 	}
 }
