@@ -1,38 +1,37 @@
 # MZCachetastic (for .net)
 
-A very simple to implement caching mechanism for .net.
+A very simple to implement static caching mechanism for .net.
 
 #NuGet
 
-A NuGet package is TBA.
+A NuGet package is available from http://nuget.org/packages/MZCachetastic.
 
 ## IMPLEMENTATION:
 
     // Make sure you scope Cachetastic as you see fit.
-    protected static Cachetastic Cachetastic;
-    ...
-    static Constructor 
-    {
-        Cachetastic = new Cachetastic();
-    }
-    ...
-    var result = Cachetastic.Fetch(key, () -> DoSomething());
+    protected static MZCachetastic.Cachetastic Cachetastic = new MZCachetastic.Cachetastic(TimeSpan.FromMinutes(10););
+
+    
+    void Something() {
+		var result = Cachetastic.Get(key, () -> {
+			return "This is Func-ie";
+		});
+	}
     
 ## IS IT WORKING:
 
-The first use of Cachetastic for the key will execute the Func<T> and store/return the result. Subsequent fetch calls to Cachetastic will match on the key (and optionally hashcode) and returned the cached value.
+The first use of Cachetastic for the key will execute the Func<T> and store/return the result. Subsequent Get calls to Cachetastic will match on the key (and optionally hashcode) and returned the cached value.
 
 ## CAVEATS:
 
 Cachetastic may not return the cached values if:
 
-* The cached value is old (default: 5 minutes).
-* If the hashcode for the key is different (more on the hashcode usage later).
+* The cached value is old (default: 15 minutes).
+* If the hashcode for the key is different.
 
 ## REQUIREMENTS:
 
 Requires .Net 4 (dependancy on ConcurrentDictionary)
-
 
 ## LICENSE:
 
