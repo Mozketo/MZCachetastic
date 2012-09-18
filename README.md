@@ -1,25 +1,22 @@
 # MZCachetastic (for .net)
 
-A very simple to implement static caching mechanism for .net.
+A very simple to implement caching mechanism for .net.
 
 #NuGet
 
-A NuGet package is available from http://nuget.org/packages/MZCachetastic.
+A NuGet package is TBA.
 
 ## IMPLEMENTATION:
 
     // Make sure you scope Cachetastic as you see fit.
-    protected static MZCachetastic.Cachetastic Cachetastic = new MZCachetastic.Cachetastic();
-
-    static Constructor()
+    protected static Cachetastic Cachetastic;
+    ...
+    static Constructor 
     {
-        // Optional (Cachetastic already has a default)
-		Cachetastic.Lifetime = TimeSpan.FromMinutes(10);
+        Cachetastic = new Cachetastic();
     }
     ...
-    var result = Cachetastic.Fetch(key, () -> {
-		return "something";
-	});
+    var result = Cachetastic.Fetch(key, () -> DoSomething());
     
 ## IS IT WORKING:
 
@@ -35,6 +32,7 @@ Cachetastic may not return the cached values if:
 ## REQUIREMENTS:
 
 Requires .Net 4 (dependancy on ConcurrentDictionary)
+
 
 ## LICENSE:
 
